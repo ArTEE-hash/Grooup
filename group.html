@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>รายชื่อผู้เข้าร่วมประชุม แบ่งกลุ่ม A–F พร้อมค้นหาและเลือกประธานกลุ่ม</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #1e2a47, #12192f 70%, #0c1236);
+      font-family: 'Kanit', sans-serif;
+      color: #f0f0f5;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      color: #a3b1ff;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px rgba(163, 177, 255, 0.8);
+    }
+    #searchInput {
+      width: 100%;
+      max-width: 400px;
+      display: block;
+      margin: 0 auto 30px auto;
+      padding: 10px 15px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: none;
+      box-shadow: 0 0 12px rgba(163, 177, 255, 0.5);
+      background: rgba(255,255,255,0.12);
+      color: #e6e9f0;
+      outline: none;
+      transition: box-shadow 0.3s ease;
+    }
+    #searchInput:focus {
+      box-shadow: 0 0 20px #8899ff;
+      background: rgba(255,255,255,0.2);
+    }
+    .group {
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.6);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      margin-bottom: 30px;
+      padding: 20px;
+      color: #e6e9f0;
+    }
+    h2 {
+      margin-top: 0;
+      color: #a3b1ff;
+      font-weight: 600;
+      text-shadow: 0 0 8px rgba(163, 177, 255, 0.8);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      font-size: 16px;
+      color: #d0d5e8;
+    }
+    th,
+    td {
+      padding: 10px 15px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      vertical-align: middle;
+    }
+    th {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #c5cae9;
+      font-weight: 500;
+    }
+    tr:hover {
+      background-color: rgba(163, 177, 255, 0.15);
+      color: #fff;
+    }
+    button.vote-btn {
+      background-color: #4a57b0;
+      color: #e6e9f0;
+      border: none;
+      border-radius: 8px;
+      padding: 5px 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    button.vote-btn:hover {
+      background-color: #6f7aff;
+    }
+    button.vote-btn.selected {
+      background-color: #ffb74d;
+      color: #000;
+      font-weight: 700;
+      cursor: default;
+    }
+    .chair-label {
+      margin-left: 10px;
+      font-weight: 700;
+      color: #ffcc00;
+      text-shadow: 0 0 6px #ffcc00;
+      user-select: none;
+    }
+    @media (max-width: 768px) {
+      table,
+      thead,
+      tbody,
+      th,
+      td,
+      tr {
+        display: block;
+      }
+      th {
+        display: none;
+      }
+      td {
+        position: relative;
+        padding-left: 50%;
+        margin-bottom: 10px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+      }
+      td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        font-weight: bold;
+        color: #a3b1ff;
+      }
+      button.vote-btn {
+        padding: 8px 15px;
+        font-size: 1rem;
+      }
+    }
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 15px 20px;
+      font-size: 1rem;
+      color: rgba(163, 177, 255, 0.85);
+      font-weight: 600;
+      font-family: 'Kanit', sans-serif;
+      background: rgba(20, 26, 49, 0.6);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.8);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(163, 177, 255, 0.3);
+      user-select: none;
+    }
+    footer span {
+      color: #8899ff;
+      font-weight: 700;
+      text-shadow: 0 0 6px rgba(136, 153, 255, 0.7);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>รายชื่อผู้เข้าร่วมประชุม แบ่งกลุ่ม A–F</h1>
+
+    <input type="text" id="searchInput" placeholder="ค้นหาชื่อ, ตำแหน่ง หรือหน่วยงาน..." />
+
+    <!-- กลุ่ม A -->
+    <div class="group" data-group="A">
+      <h2>กลุ่ม A</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ลำดับ</th>
+            <th>ชื่อ-นามสกุล</th>
+            <th>ตำแหน่ง</th>
+            <th>หน่วยงาน</th>
+            <th>เลือกประธานกลุ่ม</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="ลำดับ">049</td>
+            <td data-label="ชื่อ-นามสกุล">วลีรัตน์ จันทร์ศรีชั้น</td>
+            <td data-label="ตำแหน่ง">พยาบาลวิชาชีพชำนาญการ</td>
+            <td data-label="หน่วยงาน">ผู้ป่วยในหญิง<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">090</td>
+            <td data-label="ชื่อ-นามสกุล">นายทรงวุฒิ ทองทัศนียพร</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุข ปฏิบัติการ</td>
+            <td data-label="หน่วยงาน">รพ.บางจาก<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">019</td>
+            <td data-label="ชื่อ-นามสกุล">ชุติมา เวชสมุทรวารี</td>
+            <td data-label="ตำแหน่ง">เจ้าพนักงานสาธารณสุขชำนาญงาน</td>
+            <td data-label="หน่วยงาน">รพ.สต.ศีรษะจรเข้น้อย<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">015</td>
+            <td data-label="ชื่อ-นามสกุล">สุธาทิพย์ อยู่ถาวรวิทย์</td>
+            <td data-label="ตำแหน่ง">แพทย์แผนไทยปฏิบัติการ</td>
+            <td data-label="หน่วยงาน">รพ.บางจาก<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">047</td>
+            <td data-label="ชื่อ-นามสกุล">อนุชาติ สร้อยปัสสา</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุขชำนาญการ</td>
+            <td data-label="หน่วยงาน">รพ.สต.เทศบาลตำบลสำโรงเหนือ<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">071</td>
+            <td data-label="ชื่อ-นามสกุล">กัญญาภัค วรกุล</td>
+            <td data-label="ตำแหน่ง">นักวิเคราะห์นโยบายและแผน</td>
+            <td data-label="หน่วยงาน">ยุทธศาสตร์และแผนงานโครงการ<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">041</td>
+            <td data-label="ชื่อ-นามสกุล">ณัฐพล วิวาห์สุข</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุขปฏิบัติการ</td>
+            <td data-label="หน่วยงาน">รพ.สต.ในคลองบางปลากด<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">046</td>
+            <td data-label="ชื่อ-นามสกุล">พวงผกา ดำรงธรรม</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุขชำนาญการ</td>
+            <td data-label="หน่วยงาน">รพ.สต.บ้านคลองสวน<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- กลุ่ม B -->
+    <div class="group" data-group="B">
+      <h2>กลุ่ม B</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ลำดับ</th>
+            <th>ชื่อ-นามสกุล</th>
+            <th>ตำแหน่ง</th>
+            <th>หน่วยงาน</th>
+            <th>เลือกประธานกลุ่ม</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="ลำดับ">002</td>
+            <td data-label="ชื่อ-นามสกุล">สุภารัตน์ ชะนะศิลป์</td>
+            <td data-label="ตำแหน่ง">พยาบาลวิชาชีพชำนาญการ</td>
+            <td data-label="หน่วยงาน">งานยุทธศาสตร์ รพ.บางจาก<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">003</td>
+            <td data-label="ชื่อ-นามสกุล">สายชล หนันละหาน</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุข</td>
+            <td data-label="หน่วยงาน">รพ.บางจาก<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">026</td>
+            <td data-label="ชื่อ-นามสกุล">รัฐศาสตร์ แย้มพงษ์</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุข</td>
+            <td data-label="หน่วยงาน">รพ.สต.ราชาเทวะ<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">021</td>
+            <td data-label="ชื่อ-นามสกุล">พิพัฒน์ ศรไชย</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุขปฏิบัติการ</td>
+            <td data-label="หน่วยงาน">รพ.สต.วัดศรีวารีน้อย<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">012</td>
+            <td data-label="ชื่อ-นามสกุล">วิภาวีร์ ฤทธิ์แก้ว</td>
+            <td data-label="ตำแหน่ง">แพทย์แผนไทยชำนาญการ</td>
+            <td data-label="หน่วยงาน">รพ.บางจาก<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">029</td>
+            <td data-label="ชื่อ-นามสกุล">เสรี สังขโชติ</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุขชำนาญการ</td>
+            <td data-label="หน่วยงาน">รพ.สต.บางปูใหม่<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">080</td>
+            <td data-label="ชื่อ-นามสกุล">ยุภาพร คำประชม</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุขปฏิบัติการ</td>
+            <td data-label="หน่วยงาน">รพ.สต.สำโรงกลาง<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">022</td>
+            <td data-label="ชื่อ-นามสกุล">วันวิสา เนื่องลี</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุขปฏิบัติการ</td>
+            <td data-label="หน่วยงาน">รพ.สต.กัลปพฤกษ์<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- กลุ่ม C -->
+    <div class="group" data-group="C">
+      <h2>กลุ่ม C</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ลำดับ</th>
+            <th>ชื่อ-นามสกุล</th>
+            <th>ตำแหน่ง</th>
+            <th>หน่วยงาน</th>
+            <th>เลือกประธานกลุ่ม</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="ลำดับ">044</td>
+            <td data-label="ชื่อ-นามสกุล">กัญญารัตน์ จูวัฒนสำราญ</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุขปฏิบัติการ</td>
+            <td data-label="หน่วยงาน">รพ.สต.แหลมฟ้าผ่า<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">036</td>
+            <td data-label="ชื่อ-นามสกุล">อาภาภรณ์ คงก่อ</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุขปฏิบัติการ</td>
+            <td data-label="หน่วยงาน">รพ.สต.บางโฉลง<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">059</td>
+            <td data-label="ชื่อ-นามสกุล">อัจฉรา เถื่อนแก้ว</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุขชำนาญการ</td>
+            <td data-label="หน่วยงาน">รพ.สต.บางบ่อ<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">061</td>
+            <td data-label="ชื่อ-นามสกุล">สุมาลี สายจันทร์</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุขปฏิบัติการ</td>
+            <td data-label="หน่วยงาน">รพ.สต.ท้ายบ้านใหม่<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">040</td>
+            <td data-label="ชื่อ-นามสกุล">ณัฐพล วิวาห์สุข</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุขปฏิบัติการ</td>
+            <td data-label="หน่วยงาน">รพ.สต.ในคลองบางปลากด<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- กลุ่ม D -->
+    <div class="group" data-group="D">
+      <h2>กลุ่ม D</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ลำดับ</th>
+            <th>ชื่อ-นามสกุล</th>
+            <th>ตำแหน่ง</th>
+            <th>หน่วยงาน</th>
+            <th>เลือกประธานกลุ่ม</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="ลำดับ">032</td>
+            <td data-label="ชื่อ-นามสกุล">สุนทร สายเพ็ง</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุข</td>
+            <td data-label="หน่วยงาน">รพ.สต.บางโฉลง<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <!-- ใส่ข้อมูลเพิ่มเติมตามเดิม -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- กลุ่ม E -->
+    <div class="group" data-group="E">
+      <h2>กลุ่ม E</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ลำดับ</th>
+            <th>ชื่อ-นามสกุล</th>
+            <th>ตำแหน่ง</th>
+            <th>หน่วยงาน</th>
+            <th>เลือกประธานกลุ่ม</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="ลำดับ">057</td>
+            <td data-label="ชื่อ-นามสกุล">ลักขณา ภู่แจ้ง</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุขชำนาญการ</td>
+            <td data-label="หน่วยงาน">รพ.สต.บ้านคู่สร้าง<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">053</td>
+            <td data-label="ชื่อ-นามสกุล">อติยา ชื่นบาน</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุขชำนาญการ</td>
+            <td data-label="หน่วยงาน">ศูนย์สุขภาพชุมชนรพ.บางบ่อ<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">018</td>
+            <td data-label="ชื่อ-นามสกุล">สุธาทิพย์ อยู่ถาวรวิทย์</td>
+            <td data-label="ตำแหน่ง">แพทย์แผนไทยปฏิบัติการ</td>
+            <td data-label="หน่วยงาน">รพ.บางจาก<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">088</td>
+            <td data-label="ชื่อ-นามสกุล">วรัชยา วรรณภักดิ์</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุขปฏิบัติการ</td>
+            <td data-label="หน่วยงาน">รพ.สต.บางเมือง<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">030</td>
+            <td data-label="ชื่อ-นามสกุล">ยุทธนา ขจรโมทย์</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุขชำนาญการ</td>
+            <td data-label="หน่วยงาน">รพ.สต.ท้ายบ้านใหม่<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">083</td>
+            <td data-label="ชื่อ-นามสกุล">อรทัย คำควร</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุขปฏิบัติการ</td>
+            <td data-label="หน่วยงาน">รพ.สต.บางพึ่ง<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- กลุ่ม F -->
+    <div class="group" data-group="F">
+      <h2>กลุ่ม F</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ลำดับ</th>
+            <th>ชื่อ-นามสกุล</th>
+            <th>ตำแหน่ง</th>
+            <th>หน่วยงาน</th>
+            <th>เลือกประธานกลุ่ม</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="ลำดับ">028</td>
+            <td data-label="ชื่อ-นามสกุล">ศรีสกุล แจ้คำ</td>
+            <td data-label="ตำแหน่ง">พยาบาลวิชาชีพชำนาญการพิเศษ</td>
+            <td data-label="หน่วยงาน">รพ.บางจาก<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">007</td>
+            <td data-label="ชื่อ-นามสกุล">ปิยะธิดา ภัทราภินันท์</td>
+            <td data-label="ตำแหน่ง">นักจัดการงานทั่วไปปฏิบัติการ</td>
+            <td data-label="หน่วยงาน">รพ.บางจาก<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">003</td>
+            <td data-label="ชื่อ-นามสกุล">สายชล หนันละหาน</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุข</td>
+            <td data-label="หน่วยงาน">รพ.บางจาก<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">021</td>
+            <td data-label="ชื่อ-นามสกุล">พิพัฒน์ ศรไชย</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุขปฏิบัติการ</td>
+            <td data-label="หน่วยงาน">รพ.สต.วัดศรีวารีน้อย<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">019</td>
+            <td data-label="ชื่อ-นามสกุล">ชุติมา เวชสมุทรวารี</td>
+            <td data-label="ตำแหน่ง">เจ้าพนักงานสาธารณสุขชำนาญงาน</td>
+            <td data-label="หน่วยงาน">รพ.สต.ศีรษะจรเข้น้อย<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">075</td>
+            <td data-label="ชื่อ-นามสกุล">พีระพล ด้วงน้อย</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุข</td>
+            <td data-label="หน่วยงาน">รพ.สต.บางกะเจ้า<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+          <tr>
+            <td data-label="ลำดับ">044</td>
+            <td data-label="ชื่อ-นามสกุล">กัญญารัตน์ จูวัฒนสำราญ</td>
+            <td data-label="ตำแหน่ง">นักวิชาการสาธารณสุขปฏิบัติการ</td>
+            <td data-label="หน่วยงาน">รพ.สต.แหลมฟ้าผ่า<span class="chair-label"></span></td>
+            <td data-label="เลือกประธานกลุ่ม"><button class="vote-btn">เลือกเป็นประธานกลุ่ม</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <footer>
+    ทีมงานพัฒนายุทธศาสตร์สาธารณสุข<br />
+    สำนักงานสาธารณสุขจังหวัดสมุทรปราการ<br />
+    ผู้พัฒนางาน: <span>QU</span>
+  </footer>
+
+  <script>
+    // ฟังก์ชันค้นหา
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', () => {
+      const filter = searchInput.value.toLowerCase();
+
+      document.querySelectorAll('.group').forEach(group => {
+        let groupHasVisible = false;
+        group.querySelectorAll('tbody tr').forEach(row => {
+          // รวมข้อความในแถว (ชื่อ, ตำแหน่ง, หน่วยงาน)
+          const text = row.textContent.toLowerCase();
+          if (text.includes(filter)) {
+            row.style.display = '';
+            groupHasVisible = true;
+          } else {
+            row.style.display = 'none';
+          }
+        });
+        // ซ่อนกลุ่มถ้าไม่มีแถวที่แสดง
+        group.style.display = groupHasVisible ? '' : 'none';
+      });
+    });
+
+    // ฟังก์ชันเลือกประธานกลุ่ม
+    document.querySelectorAll('.group').forEach(group => {
+      const groupName = group.getAttribute('data-group');
+      const buttons = group.querySelectorAll('button.vote-btn');
+
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          // ลบ class selected ของปุ่มอื่นในกลุ่มเดียวกัน และลบ label "ประธานกลุ่ม" ของคนอื่นในกลุ่ม
+          buttons.forEach(otherBtn => {
+            otherBtn.classList.remove('selected');
+            const tdAgency = otherBtn.closest('tr').querySelector('td[data-label="หน่วยงาน"]');
+            tdAgency.querySelector('.chair-label').textContent = '';
+          });
+
+          // เลือกปุ่มนี้
+          btn.classList.add('selected');
+          const tdAgency = btn.closest('tr').querySelector('td[data-label="หน่วยงาน"]');
+          tdAgency.querySelector('.chair-label').textContent = 'ประธานกลุ่ม';
+        });
+      });
+    });
+  </script>
+</body>
+</html>
